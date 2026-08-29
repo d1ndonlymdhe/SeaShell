@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "string_utils.h"
+#include "fs_object.h"
 
 void process_cmd(char *cmd)
 {
@@ -18,17 +19,40 @@ void process_cmd(char *cmd)
     free(parts);
 }
 
+void mkdir(char *name, directory *parent_dir)
+{
+
+    if (parent_dir->children_count != 0)
+    {
+        char **object_names = children_names(*parent_dir);
+        for (size_t i = 0; i < parent_dir->children_count; i++)
+        {
+            if (strcmp(object_names[i], name) == 0)
+            {
+                return;
+            }
+        }
+    }
+    else
+    {
+        parent_dir->children = malloc(sizeof(fs_object));
+    }
+
+    directory *new_dir = create_dir(name, parent_dir);
+    fs_object *new_dir_object = create_object(new_dir, NULL);
+    parent_dir->children = realloc(parent_dir->children, sizeof(fs_object) * (parent_dir->children_count + 1));
+    parent_dir->children[parent_dir->children_count] = new_dir_object;
+    parent_dir->children_count = parent_dir->children_count + 1;
+}
+
 int main()
 {
     char *dir = "/";
-    while (1)
-    {
-        char *cmd = NULL;
-        size_t len = 0;
-        printf("~ %s ", dir);
-        getline(&cmd, &len, stdin);
-        string_strip(cmd);
-        process_cmd(cmd);
-    }
+    directory root_dir = {.name = "/", .children = NULL, .children_count = 0};
+    mkdir("hello", &root_dir);
+    mkdir("there", &root_dir);
+    mkdir("kenobi", &root_dir);
+
+    walk_directory(root_dir);
     return 0;
 }
