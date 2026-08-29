@@ -21,7 +21,6 @@ char **split_string(char *str, const char *delim, int *len)
         char *delim_test = (char *)malloc((sizeof(char) * delim_size) + 1);
         memcpy(delim_test, str + i, delim_size);
         delim_test[delim_size] = '\0';
-        printf("THE DELIM TEST IS: %s\n", delim_test);
         if (strcmp(delim_test, delim) == 0)
         {
             size_t current_word_len = strlen(current_word);
