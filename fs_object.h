@@ -67,7 +67,6 @@ char **children_names(const directory parent_dir)
     return object_names;
 }
 
-
 directory *create_dir(const char *dir_name, directory *parent_dir)
 {
     char *name = malloc(sizeof(char) * (strlen(dir_name) + 1));
@@ -79,6 +78,27 @@ directory *create_dir(const char *dir_name, directory *parent_dir)
     dir->parent_dir = parent_dir;
     return dir;
 }
+
+void delete_fs_object(fs_object obj)
+{
+    if (obj.type == DIRECTORY_TYPE)
+    {
+        for (size_t i = 0; i < obj.data.directory->children_count; i++)
+        {
+            directory *child = obj.data.directory->children[i]->data.directory;
+            delete_fs_object(*obj.data.directory->children[i]);
+            free(child->name);
+            free(child->children);
+        }
+    }
+    if (obj.type == FILE_TYPE)
+    {
+        file *child = obj.data.file;
+        free(child->name);
+        free(child->contents);
+    }
+}
+
 
 fs_object *create_fs_object(directory *directory, file *file)
 {

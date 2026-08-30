@@ -30,16 +30,24 @@ void mkdir(char *name, directory *parent_dir)
 
 void chdir(char *name, directory **current_dir_mut)
 {
-    // directory *current_dir_pointer = *current_dir_mut;
-
-    for (size_t i = 0; i < (*current_dir_mut)->children_count; i++)
+    const directory *current_dir = *current_dir_mut;
+    if (strcmp(name, "..") == 0)
     {
-        if (strcmp(fs_object_name(*((*current_dir_mut)->children[i])), name) == 0)
+        if (current_dir->parent_dir != NULL)
         {
-            fs_object_type type = (*current_dir_mut)->children[i]->type;
+            *current_dir_mut = current_dir->parent_dir;
+            return;
+        }
+    }
+
+    for (size_t i = 0; i < current_dir->children_count; i++)
+    {
+        if (strcmp(fs_object_name(*(current_dir->children[i])), name) == 0)
+        {
+            fs_object_type type = current_dir->children[i]->type;
             if (type == DIRECTORY_TYPE)
             {
-                (*current_dir_mut) = (*current_dir_mut)->children[i]->data.directory;
+                *current_dir_mut = current_dir->children[i]->data.directory;
                 return;
             }
             else
@@ -56,6 +64,35 @@ void ls(const directory parent_dir)
     for (size_t i = 0; i < parent_dir.children_count; i++)
     {
         printf("Object name = %s\n", fs_object_name(*parent_dir.children[i]));
+    }
+}
+
+void rmdir(char *name, directory **current_dir_mut)
+{
+    const directory *current_dir = *current_dir_mut;
+    if (strcmp(name, "..") == 0)
+    {
+        if (current_dir->parent_dir != NULL)
+        {
+            *current_dir_mut = current_dir->parent_dir;
+            return;
+        }
+    }
+
+    for (size_t i = 0; i < current_dir->children_count; i++)
+    {
+        if (strcmp(fs_object_name(*(current_dir->children[i])), name) == 0)
+        {
+            fs_object *object = current_dir->children[i];
+            delete_fs_object(*(current_dir->children[i]));
+            free(object);
+            (*current_dir_mut)->children_count = current_dir->children_count - 1;
+            for (size_t j = i; j < current_dir->children_count - 1; j++)
+            {
+                current_dir->children[j] = current_dir->children[j + 1];
+            }
+            return;
+        }
     }
 }
 
@@ -83,6 +120,11 @@ void process_cmd(char *cmd, directory **current_dir)
     if (strcmp(cmd_name, "ls") == 0)
     {
         ls(**current_dir);
+    }
+    if (strcmp(cmd_name, "rm") == 0)
+    {
+        printf("Arg = %s\n", parts[1]);
+        rmdir(parts[1], current_dir);
     }
     // Free the memory allocated for the parts
     for (int i = 0; i < parts_len; i++)
