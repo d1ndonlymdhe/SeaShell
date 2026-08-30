@@ -96,6 +96,11 @@ void rmdir(char *name, directory **current_dir_mut)
     }
 }
 
+void echo(char *arg)
+{
+    printf("%s\n", arg);
+}
+
 void process_cmd(char *cmd, directory **current_dir)
 {
     int parts_len = 0;
@@ -125,6 +130,11 @@ void process_cmd(char *cmd, directory **current_dir)
     {
         printf("Arg = %s\n", parts[1]);
         rmdir(parts[1], current_dir);
+    }
+    if (strcmp(cmd_name, "echo") == 0)
+    {
+        printf("Args = %\n", parts[1]);
+        echo(parts[1]);
     }
     // Free the memory allocated for the parts
     for (int i = 0; i < parts_len; i++)
