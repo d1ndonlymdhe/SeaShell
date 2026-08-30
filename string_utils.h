@@ -6,48 +6,24 @@
  * The length of the resulting array is stored in the provided len pointer.
  * Copies the strings into new memory, so the caller is responsible for freeing the memory.
  */
-char **split_string(char *str, const char *delim, int *len)
+char **split_string(const char *str, const char *delim, int *len)
 {
-    size_t delim_size = strlen(delim);
-    char **out = (char **)malloc(sizeof(char *));
-    char *current_word = (char *)malloc(sizeof(char));
+    char *str_copy = malloc(sizeof(char) * (strlen(str) + 1));
+    strcpy(str_copy,str);
     *len = 1;
-
-    size_t i = 0;
-
-    while (i < strlen(str))
+    char **out = malloc(sizeof(char *));
+    char *part = strtok(str_copy, delim);
+    while (part != NULL)
     {
-        size_t end = i + delim_size;
-        char *delim_test = (char *)malloc((sizeof(char) * delim_size) + 1);
-        memcpy(delim_test, str + i, delim_size);
-        delim_test[delim_size] = '\0';
-        if (strcmp(delim_test, delim) == 0)
-        {
-            size_t current_word_len = strlen(current_word);
-            if (current_word_len > 0)
-            {
-                char *current_word_copy = (char *)malloc(sizeof(char) * current_word_len + 1);
-                memcpy(current_word_copy, current_word, current_word_len + 1);
-                out[*len - 1] = current_word_copy;
-                *len = *len + 1;
-                out = (char **)realloc(out, (*len) * sizeof(char *));
-                current_word = (char *)realloc(current_word, sizeof(char));
-                current_word[0] = '\0';
-            }
-            i += delim_size;
-        }
-        else
-        {
-            current_word = (char *)realloc(current_word, strlen(current_word) + 2);
-            strncat(current_word, str + i, 1);
-            i += 1;
-        }
-        free(delim_test);
+        out = realloc(out, (*len) * sizeof(char *));
+        char *part_copy = malloc(strlen(part) + 1);
+        strcpy(part_copy, part);
+        out[(*len) - 1] = part_copy;
+        part = strtok(NULL, delim);
+        (*len)++;
     }
-    char *current_word_copy = (char *)malloc(sizeof(char) * strlen(current_word) + 1);
-    memcpy(current_word_copy, current_word, strlen(current_word) + 1);
-    out[*len - 1] = current_word_copy;
-    free(current_word);
+    (*len)--;
+    free(part);
     return out;
 }
 /**
@@ -75,5 +51,9 @@ void string_strip(char *str)
         }
     }
     str[end_at + 1] = '\0';
+    for (size_t i = 0; i < start_from; i++)
+    {
+        str[i] = '\0';
+    }
     str = str + start_from;
 }

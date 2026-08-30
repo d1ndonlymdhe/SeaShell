@@ -39,7 +39,7 @@ typedef struct directory
 } directory;
 const size_t DIRECTORY_OBJECT_SIZE = sizeof(directory);
 
-char *fs_object_name(fs_object object)
+char *fs_object_name(const fs_object object)
 {
     switch (object.type)
     {
@@ -53,7 +53,7 @@ char *fs_object_name(fs_object object)
 /**
  * Get array of names of children both file and directories
  */
-char **children_names(directory parent_dir)
+char **children_names(const directory parent_dir)
 {
     if (parent_dir.children_count == 0)
     {
@@ -67,26 +67,20 @@ char **children_names(directory parent_dir)
     return object_names;
 }
 
-void walk_directory(directory parent_dir)
-{
-    printf("Walking directory %s\n", parent_dir.name);
-    for (size_t i = 0; i < parent_dir.children_count; i++)
-    {
-        printf("Object name = %s\n", fs_object_name(*parent_dir.children[i]));
-    }
-}
 
-directory *create_dir(char *dir_name, directory *parent_dir)
+directory *create_dir(const char *dir_name, directory *parent_dir)
 {
+    char *name = malloc(sizeof(char) * (strlen(dir_name) + 1));
+    strcpy(name, dir_name);
     directory *dir = malloc(DIRECTORY_OBJECT_SIZE * 1);
-    dir->name = dir_name;
+    dir->name = name;
     dir->children = NULL;
     dir->children_count = 0;
     dir->parent_dir = parent_dir;
     return dir;
 }
 
-fs_object *create_object(directory *directory, file *file)
+fs_object *create_fs_object(directory *directory, file *file)
 {
     fs_object_union *object_union = malloc(FS_UNION_SIZE);
     fs_object_type type;
