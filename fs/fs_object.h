@@ -1,3 +1,5 @@
+#ifndef FS_OBJECT_H
+#define FS_OBJECT_H
 
 typedef enum fs_object_type
 {
@@ -99,7 +101,6 @@ void delete_fs_object(fs_object obj)
     }
 }
 
-
 fs_object *create_fs_object(directory *directory, file *file)
 {
     fs_object_union *object_union = malloc(FS_UNION_SIZE);
@@ -119,3 +120,5 @@ fs_object *create_fs_object(directory *directory, file *file)
     object->data = *object_union;
     return object;
 }
+
+#endif

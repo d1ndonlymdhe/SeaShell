@@ -1,3 +1,6 @@
+#ifndef STRING_UTILS_H
+#define STRING_UTILS_H
+
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -57,3 +60,5 @@ void string_strip(char *str)
     }
     str = str + start_from;
 }
+
+#endif
