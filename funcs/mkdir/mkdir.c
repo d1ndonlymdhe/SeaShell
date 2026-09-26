@@ -1,14 +1,13 @@
-#ifndef MKDIR_H
-#define MKDIR_H
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
-#include "../fs/fs.h"
-#include "../utils/string_utils.h"
-#include "../fs/fs_object.h"
-#include "../registry/func_registry.h"
+#include "mkdir.h"
+#include "../../fs/fs.h"
+#include "../../utils/string_utils.h"
+#include "../../fs/fs_object.h"
+#include "../../registry/func_registry.h"
+
 
 int mkdir_inner(char *name, directory *parent_dir)
 {
@@ -49,9 +48,8 @@ int mkdir(int argc, char **argv)
     return mkdir_inner(name, fs->current_dir);
 }
 
-__attribute__((constructor)) void init_mkdir()
+void init_mkdir()
 {
+    printf("Registering mkdir function\n");
     register_func("mkdir", mkdir);
 }
-
-#endif

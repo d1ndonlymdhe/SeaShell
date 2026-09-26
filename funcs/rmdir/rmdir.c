@@ -1,13 +1,12 @@
-#ifndef RMDIR_H
-#define RMDIR_H
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../fs/fs.h"
-#include "../utils/string_utils.h"
-#include "../fs/fs_object.h"
-#include "../registry/func_registry.h"
+
+#include "rmdir.h"
+#include "../../fs/fs.h"
+#include "../../utils/string_utils.h"
+#include "../../fs/fs_object.h"
+#include "../../registry/func_registry.h"
 
 int rmdir_inner(char *name, directory **current_dir_mut)
 {
@@ -51,10 +50,9 @@ int rmdir(int argc, char **argv)
     return rmdir_inner(name, &fs->current_dir);
 }
 
-__attribute__((constructor)) void init_rmdir()
+void init_rmdir()
 {
+    printf("Registering rmdir function\n");
     register_func("rmdir", rmdir);
     register_func("rm", rmdir);
 }
-
-#endif

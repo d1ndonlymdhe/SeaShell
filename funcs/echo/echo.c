@@ -1,7 +1,7 @@
-#ifndef ECHO_H
-#define ECHO_H
 #include <stdio.h>
-#include "../registry/func_registry.h"
+#include "echo.h"
+#include "../../registry/func_registry.h"
+
 int echo_inner(char *arg)
 {
     printf("%s\n", arg);
@@ -19,9 +19,8 @@ int echo(int argc, char **argv)
     return echo_inner(arg);
 }
 
-__attribute__((constructor)) void init_echo()
+void init_echo()
 {
+    printf("Registering echo function\n");
     register_func("echo", echo);
 }
-
-#endif

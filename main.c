@@ -1,13 +1,16 @@
 #include <stdio.h>
+
 #include "utils/string_utils.h"
+
 #include "fs/fs_object.h"
 #include "fs/fs.h"
+
 #include "registry/func_registry.h"
-#include "funcs/mkdir.h"
-#include "funcs/ls.h"
-#include "funcs/chdir.h"
-#include "funcs/rmdir.h"
-#include "funcs/echo.h"
+#include "funcs/mkdir/mkdir.h"
+#include "funcs/ls/ls.h"
+#include "funcs/chdir/chdir.h"
+#include "funcs/rmdir/rmdir.h"
+#include "funcs/echo/echo.h"
 
 void process_cmd(char *cmd, directory **current_dir)
 {
@@ -20,7 +23,6 @@ void process_cmd(char *cmd, directory **current_dir)
     }
     char *cmd_name = parts[0];
     printf("CMD = %s\n", cmd_name);
-
     func_registry_entry *f = get_func(cmd_name);
     if (f != NULL)
     {
@@ -41,7 +43,14 @@ void process_cmd(char *cmd, directory **current_dir)
 }
 
 int main()
-{
+{   
+
+    init_echo();
+    init_ls();
+    init_mkdir();
+    init_chdir();
+    init_rmdir();
+    
     directory root_dir = {.name = "/", .children = NULL, .children_count = 0};
     directory *current_dir = &root_dir;
 

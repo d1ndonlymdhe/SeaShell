@@ -1,14 +1,11 @@
-#ifndef CHDIR_H
-#define CHDIR_H
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../fs/fs.h"
-#include "../utils/string_utils.h"
-#include "../fs/fs_object.h"
-#include "../registry/func_registry.h"
-
+#include "../../fs/fs.h"
+#include "../../utils/string_utils.h"
+#include "../../fs/fs_object.h"
+#include "../../registry/func_registry.h"
+#include "chdir.h"
 
 int chdir_inner(char *name, directory **current_dir_mut)
 {
@@ -53,12 +50,9 @@ int chdir(int argc, char **argv)
     return chdir_inner(name, &fs->current_dir);
 }
 
-
-__attribute__((constructor)) void init_chdir()
+void init_chdir()
 {
+    printf("Registering chdir function\n");
     register_func("chdir", chdir);
     register_func("cd", chdir);
 }
-
-
-#endif

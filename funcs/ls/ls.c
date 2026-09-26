@@ -1,10 +1,9 @@
-#ifndef LS_H
-#define LS_H
-
 #include <stdio.h>
-#include "../fs/fs_object.h"
-#include "../fs/fs.h"
-#include "../registry/func_registry.h"
+
+#include "ls.h"
+#include "../../fs/fs_object.h"
+#include "../../fs/fs.h"
+#include "../../registry/func_registry.h"
 
 int ls_inner(const directory parent_dir)
 {
@@ -27,9 +26,8 @@ int ls(int argc, char **argv)
     return ls_inner(*parent_dir);
 }
 
-__attribute__((constructor)) void init_ls()
+void init_ls()
 {
+    printf("Registering ls function\n");
     register_func("ls", ls);
 }
-
-#endif
