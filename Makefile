@@ -1,10 +1,16 @@
 FUNCS := $(notdir $(wildcard funcs/*))
-FUNC_OBJS := $(foreach f, $(FUNCS), funcs/$(f)/$(f).o)
+FUNC_LIBS := $(foreach f, $(FUNCS), funcs/$(f)/$(f).so)
 
-all: fs/fs.o fs/fs_object.o $(FUNC_OBJS) registry/func_registry.o utils/string_utils.o libseashell.so main
+all: libfs.so libregistry.so libutils.so $(FUNC_LIBS) main
 
 clean:
-	rm -f fs/fs.o fs/fs_object.o $(FUNC_OBJS) registry/func_registry.o utils/string_utils.o libseashell.so main main.o
+	rm -f fs/fs.o fs/fs_object.o $(FUNC_LIBS) registry/func_registry.o utils/string_utils.o libfs.so libregistry.so libutils.so main 
+
+libs: $(FUNC_LIBS)
+
+$(FUNC_LIBS): funcs/%.so: funcs/%.c funcs/%.h
+	echo "Creating shared library $@"
+	cc -shared -L. -lfs -lregistry -lutils -fPIC $< -o $@
 
 fs/fs.o: fs/fs.c fs/fs.h
 	echo "Compiling fs.c"
@@ -22,17 +28,22 @@ utils/string_utils.o: utils/string_utils.c utils/string_utils.h
 	echo "Compiling string_utils.c"
 	cc -c -fPIC utils/string_utils.c -o utils/string_utils.o
 
-libseashell.so: fs/fs.o fs/fs_object.o $(FUNC_OBJS) registry/func_registry.o utils/string_utils.o
-	echo "Creating shared library libseashell.so"
-	cc -shared -o libseashell.so fs/fs.o fs/fs_object.o $(FUNC_OBJS) registry/func_registry.o utils/string_utils.o
+libutils.so: utils/string_utils.o
+	echo "Creating shared library libutils.so"
+	cc -shared -o libutils.so utils/string_utils.o
+
+libregistry.so: registry/func_registry.o
+	echo "Creating shared library libregistry.so"
+	cc -shared -o libregistry.so registry/func_registry.o
+
+libfs.so: fs/fs.o fs/fs_object.o
+	echo "Creating shared library libfs.so"
+	cc -shared -o libfs.so fs/fs.o fs/fs_object.o
 
 main: main.c
 	echo "Compiling main.c"
-	cc main.c -L. -lseashell -o main
+	cc main.c -L. -lfs -lregistry -lutils -o main
 
 exec: main
 	./main
 
-$(FUNC_OBJS): funcs/%.o: funcs/%.c funcs/%.h
-	echo "Compiling $<"
-	cc -c -fPIC $< -o $@
