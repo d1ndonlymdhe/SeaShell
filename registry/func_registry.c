@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include "func_registry.h"
 
-func_registry *get_registry()
+func_registry *get_func_registry()
 {
     static size_t initialized = 0;
     static func_registry *registry;
@@ -23,7 +23,7 @@ func_registry *get_registry()
 
 func_registry_entry *get_func(const char *name)
 {
-    func_registry *registry = get_registry();
+    func_registry *registry = get_func_registry();
     for (size_t i = 0; i < registry->length; i++)
     {
         if (strcmp(registry->items[i].name, name) == 0)
@@ -37,7 +37,7 @@ func_registry_entry *get_func(const char *name)
 
 void register_func(char *name, int (*func)(int argc, char **argv))
 {
-    func_registry *registry = get_registry();
+    func_registry *registry = get_func_registry();
     func_registry_entry *entry = (func_registry_entry *)malloc(sizeof(func_registry_entry));
     entry->func = func;
     entry->name = name;

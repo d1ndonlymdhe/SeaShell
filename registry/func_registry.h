@@ -19,8 +19,8 @@ typedef struct func_registry
 } func_registry;
 
 
-func_registry *get_registry();
-func_registry_entry *get_func(const char *name);
+extern func_registry *get_func_registry();
+extern func_registry_entry *get_func(const char *name);
 
 void register_func(char *name, int (*func)(int argc, char **argv));
 

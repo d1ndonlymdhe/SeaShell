@@ -4,9 +4,11 @@ FUNC_LIBS := $(foreach f, $(FUNCS), funcs/$(f)/$(f).so)
 all: libfs.so libregistry.so libutils.so $(FUNC_LIBS) main
 
 clean:
-	rm -f fs/fs.o fs/fs_object.o $(FUNC_LIBS) registry/func_registry.o utils/string_utils.o libfs.so libregistry.so libutils.so main 
+	rm -f fs/fs.o fs/fs_object.o $(FUNC_LIBS) registry/func_registry.o utils/string_utils.o libfs.so libregistry.so libutils.so main lib_registry.txt
 
-libs: $(FUNC_LIBS)
+core_libs: libutils.so libregistry.so libfs.so
+func_libs: core_libs $(FUNC_LIBS)
+
 
 $(FUNC_LIBS): funcs/%.so: funcs/%.c funcs/%.h
 	echo "Creating shared library $@"
@@ -40,9 +42,9 @@ libfs.so: fs/fs.o fs/fs_object.o
 	echo "Creating shared library libfs.so"
 	cc -shared -o libfs.so fs/fs.o fs/fs_object.o
 
-main: main.c
+main: main.c loader/loader.c loader/loader.h
 	echo "Compiling main.c"
-	cc main.c -L. -lfs -lregistry -lutils -o main
+	cc main.c loader/loader.c -L. -lfs -lregistry -lutils -o main
 
 exec: main
 	./main

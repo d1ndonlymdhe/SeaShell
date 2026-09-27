@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <dlfcn.h>
 
 #include "utils/string_utils.h"
 
@@ -7,6 +6,8 @@
 #include "fs/fs.h"
 
 #include "registry/func_registry.h"
+#include "loader/loader.h"
+
 void process_cmd(char *cmd)
 {
     int parts_len = 0;
@@ -17,15 +18,35 @@ void process_cmd(char *cmd)
         return;
     }
     char *cmd_name = parts[0];
-    func_registry_entry *f = get_func(cmd_name);
-    if (f != NULL)
+
+    if (strcmp(cmd_name, "load") == 0)
     {
-        int (*func)(int argc, char **argv) = f->func;
-        func(parts_len, parts);
+        if (parts_len < 3)
+        {
+            printf("Incorrect load command format");
+        }
+        else
+        {
+            char *cmd_path = parts[1];
+            char *init_func = parts[2];
+            lib_entry entry = {
+                .init_func_name = init_func,
+                .lib_path = cmd_path};
+            load_lib(entry);
+        }
     }
     else
     {
-        printf("Command not found: %s\n", cmd_name);
+        func_registry_entry *f = get_func(cmd_name);
+        if (f != NULL)
+        {
+            int (*func)(int argc, char **argv) = f->func;
+            func(parts_len, parts);
+        }
+        else
+        {
+            printf("Command not found: %s\n", cmd_name);
+        }
     }
 
     // Free the memory allocated for the parts
@@ -36,32 +57,10 @@ void process_cmd(char *cmd)
     free(parts);
 }
 
-void load_lib(const char *lib_path, const char *init_func_name)
-{
-    void *handle = dlopen(lib_path, RTLD_LAZY);
-    if (!handle)
-    {
-        fprintf(stderr, "Error loading library %s: %s\n", lib_path, dlerror());
-        return;
-    }
-    void (*init_func)(void) = dlsym(handle, init_func_name);
-    if (!init_func)
-    {
-        fprintf(stderr, "Error finding init function %s in library %s: %s\n", init_func_name, lib_path, dlerror());
-        dlclose(handle);
-        return;
-    }
-    init_func();
-}
-
 int main()
 {
     fs_repr *fs = get_fs();
-    load_lib("./funcs/mkdir/mkdir.so", "init_mkdir");
-    load_lib("./funcs/chdir/chdir.so", "init_chdir");
-    load_lib("./funcs/ls/ls.so", "init_ls");
-    load_lib("./funcs/rmdir/rmdir.so", "init_rmdir");
-    load_lib("./funcs/echo/echo.so", "init_echo");
+    load_lib_registry();
     while (1)
     {
         char *cmd = NULL;
