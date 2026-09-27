@@ -26,7 +26,7 @@ libseashell.so: fs/fs.o fs/fs_object.o $(FUNC_OBJS) registry/func_registry.o uti
 	echo "Creating shared library libseashell.so"
 	cc -shared -o libseashell.so fs/fs.o fs/fs_object.o $(FUNC_OBJS) registry/func_registry.o utils/string_utils.o
 
-main: main.c libseashell.so
+main: main.c
 	echo "Compiling main.c"
 	cc main.c -L. -lseashell -o main
 

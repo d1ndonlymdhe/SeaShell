@@ -22,7 +22,6 @@ void process_cmd(char *cmd, directory **current_dir)
         return;
     }
     char *cmd_name = parts[0];
-    printf("CMD = %s\n", cmd_name);
     func_registry_entry *f = get_func(cmd_name);
     if (f != NULL)
     {

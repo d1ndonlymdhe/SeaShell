@@ -7,10 +7,9 @@
 
 int ls_inner(const directory parent_dir)
 {
-    printf("Walking directory %s\n", parent_dir.name);
     for (size_t i = 0; i < parent_dir.children_count; i++)
     {
-        printf("Object name = %s\n", fs_object_name(*parent_dir.children[i]));
+        printf("%s\n", fs_object_name(*parent_dir.children[i]));
     }
     return 0;
 }
