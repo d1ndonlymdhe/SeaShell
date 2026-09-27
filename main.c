@@ -12,7 +12,7 @@
 #include "funcs/rmdir/rmdir.h"
 #include "funcs/echo/echo.h"
 
-void process_cmd(char *cmd, directory **current_dir)
+void process_cmd(char *cmd)
 {
     int parts_len = 0;
     char **parts = split_string(cmd, " ", &parts_len);
@@ -42,26 +42,31 @@ void process_cmd(char *cmd, directory **current_dir)
 }
 
 int main()
-{   
+{
 
     init_echo();
     init_ls();
     init_mkdir();
     init_chdir();
     init_rmdir();
-    
-    directory root_dir = {.name = "/", .children = NULL, .children_count = 0};
-    directory *current_dir = &root_dir;
+
+    fs_repr *fs = get_fs();
 
     while (1)
     {
         char *cmd = NULL;
         size_t len = 0;
-        printf("~ %s ", current_dir->name);
+        if (strcmp(fs->current_dir->name, "/") == 0)
+        {
+            printf("~ ");
+        }
+        else
+        {
+            printf("~ %s ", fs->current_dir->name);
+        }
         getline(&cmd, &len, stdin);
         string_strip(cmd);
-        process_cmd(cmd, &current_dir);
-        fflush(stdin);
+        process_cmd(cmd);
     }
 
     return 0;
