@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "mkdir.h"
 #include "../../fs/fs.h"
@@ -8,19 +9,14 @@
 #include "../../fs/fs_object.h"
 #include "../../registry/func_registry.h"
 
-
 int mkdir_inner(char *name, directory *parent_dir)
 {
 
     if (parent_dir->children_count != 0)
     {
-        char **object_names = children_names(*parent_dir);
-        for (size_t i = 0; i < parent_dir->children_count; i++)
+        if (object_exists(name, *parent_dir))
         {
-            if (strcmp(object_names[i], name) == 0)
-            {
-                return 1;
-            }
+            return 1;
         }
     }
     else

@@ -15,4 +15,6 @@ char **split_string(const char *str, const char *delim, int *len);
  */
 void string_strip(char *str);
 
+char *str_dup(const char *str);
+
 #endif

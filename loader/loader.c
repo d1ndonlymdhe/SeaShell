@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <dlfcn.h>
+#include <stdbool.h>
 
 #include "loader.h"
 #include "../utils/string_utils.h"
 
-void load_so(lib_entry entry)
+bool load_so(lib_entry entry)
 {
     char *lib_path = entry.lib_path;
     char *init_func_name = entry.init_func_name;
@@ -13,22 +14,25 @@ void load_so(lib_entry entry)
     if (!handle)
     {
         fprintf(stderr, "Error loading library %s: %s\n", lib_path, dlerror());
-        return;
+        return false;
     }
     void (*init_func)(void) = dlsym(handle, init_func_name);
     if (!init_func)
     {
         fprintf(stderr, "Error finding init function %s in library %s: %s\n", init_func_name, lib_path, dlerror());
         dlclose(handle);
-        return;
+        return false;
     }
     init_func();
+    return true;
 }
 
 void load_lib(lib_entry entry)
 {
-    load_so(entry);
-    add_entry(entry);
+    if (load_so(entry))
+    {
+        add_entry(entry);
+    }
 }
 
 lib_registry *get_lib_registry()
@@ -48,6 +52,7 @@ lib_registry *get_lib_registry()
     return registry;
 }
 
+
 void add_entry(lib_entry entry)
 {
     lib_registry *registry = get_lib_registry();
@@ -56,6 +61,7 @@ void add_entry(lib_entry entry)
     registry->entries[registry->count - 1] = entry;
     save_lib_registry();
 }
+
 
 /**
  * LIB FILE FORMAT
@@ -70,12 +76,12 @@ void save_lib_registry()
     lib_registry registry = *registry_pointer;
     const char *filename = "lib_registry.txt";
     FILE *file = fopen(filename, "w");
-    printf("%zu\n", registry.count);
+    // printf("%zu\n", registry.count);
     fprintf(file, "%zu\n", registry.count);
     for (size_t i = 0; i < registry.count; i++)
     {
         lib_entry entry = registry.entries[i];
-        printf("%s\t%s\n", entry.lib_path, entry.init_func_name);
+        // printf("%s\t%s\n", entry.lib_path, entry.init_func_name);
         fprintf(file, "%s\t%s\n", entry.lib_path, entry.init_func_name);
     }
     fclose(file);

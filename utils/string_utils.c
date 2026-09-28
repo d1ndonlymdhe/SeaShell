@@ -29,6 +29,18 @@ char **split_string(const char *str, const char *delim, int *len)
     free(part);
     return out;
 }
+
+char *str_dup(const char *str)
+{
+    size_t len = strlen(str);
+    char *copy = malloc(len + 1);
+    if (copy != NULL)
+    {
+        strcpy(copy, str);
+    }
+    return copy;
+}
+
 /**
  * Strips leading and trailing whitespace inplace.
  */

@@ -18,17 +18,20 @@ void process_cmd(char *cmd)
         return;
     }
     char *cmd_name = parts[0];
-
+    // print_registry();
     if (strcmp(cmd_name, "load") == 0)
     {
         if (parts_len < 3)
         {
-            printf("Incorrect load command format");
+            printf("Incorrect load command format\n");
         }
         else
         {
-            char *cmd_path = parts[1];
-            char *init_func = parts[2];
+            char *cmd_path = str_dup(parts[1]);
+            char *init_func = str_dup(parts[2]);
+            // printf("CREATING ENTRY\n");
+            // printf("PATH = %s\n",cmd_path);
+            // printf("INIT = %s\n", init_func);
             lib_entry entry = {
                 .init_func_name = init_func,
                 .lib_path = cmd_path};
@@ -48,7 +51,6 @@ void process_cmd(char *cmd)
             printf("Command not found: %s\n", cmd_name);
         }
     }
-
     // Free the memory allocated for the parts
     for (int i = 0; i < parts_len; i++)
     {

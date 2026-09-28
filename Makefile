@@ -42,7 +42,7 @@ libfs.so: fs/fs.o fs/fs_object.o
 	echo "Creating shared library libfs.so"
 	cc -shared -o libfs.so fs/fs.o fs/fs_object.o
 
-main: main.c loader/loader.c loader/loader.h
+main: main.c loader/loader.c loader/loader.h libfs.so libregistry.so libutils.so
 	echo "Compiling main.c"
 	cc main.c loader/loader.c -L. -lfs -lregistry -lutils -o main
 

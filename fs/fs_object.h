@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 typedef enum fs_object_type
 {
@@ -44,7 +45,7 @@ typedef struct directory
 extern const size_t DIRECTORY_OBJECT_SIZE;
 
 char *fs_object_name(const fs_object object);
-
+bool object_exists(const char *obj_name, directory parent_dir);
 /**
  * Get array of names of children both file and directories
  */
@@ -54,6 +55,7 @@ directory *create_dir(const char *dir_name, directory *parent_dir);
 
 void delete_fs_object(fs_object obj);
 
-fs_object *create_fs_object(directory *directory, file *file);
+file *create_file(const char *file_name, const char *file_contents);
 
+fs_object *create_fs_object(directory *directory, file *file);
 #endif
