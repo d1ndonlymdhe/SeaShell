@@ -18,7 +18,6 @@ void process_cmd(char *cmd)
         return;
     }
     char *cmd_name = parts[0];
-    // print_registry();
     if (strcmp(cmd_name, "load") == 0)
     {
         if (parts_len < 3)
@@ -29,14 +28,16 @@ void process_cmd(char *cmd)
         {
             char *cmd_path = str_dup(parts[1]);
             char *init_func = str_dup(parts[2]);
-            // printf("CREATING ENTRY\n");
-            // printf("PATH = %s\n",cmd_path);
-            // printf("INIT = %s\n", init_func);
             lib_entry entry = {
                 .init_func_name = init_func,
                 .lib_path = cmd_path};
             load_lib(entry);
         }
+    }
+    else if (strcmp(cmd_name, "exit") == 0)
+    {
+        save_fs();
+        exit(0);
     }
     else
     {

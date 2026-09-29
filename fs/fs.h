@@ -12,4 +12,6 @@ typedef struct fs_repr
 
 fs_repr *get_fs();
 
+void save_fs();
+
 #endif
