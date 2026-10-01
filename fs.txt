@@ -1,0 +1,12 @@
+DIR /
+2
+DIR abcd
+1
+DIR efgh
+0
+DIR xyz
+2
+DIR marias
+0
+DIR ab123
+0

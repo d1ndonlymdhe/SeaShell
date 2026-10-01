@@ -1,0 +1,5 @@
+4
+./funcs/mkdir/mkdir.so	init_mkdir
+./funcs/touch/touch.so	init_touch
+./funcs/ls/ls.so	init_ls
+./funcs/chdir/chdir.so	init_chdir

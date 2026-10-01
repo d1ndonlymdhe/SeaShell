@@ -43,7 +43,7 @@ void save_directory(directory dir, FILE *fs_file)
 }
 
 /**
- * The root directory is implicit.
+ *
  * DIR_STRUCTURE:
  * <"DIR"> <name>
  * <number_of_objects>
