@@ -1,19 +1,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-size_t p2(char *data, char **save_ptr, size_t offset_lines)
+
+size_t parse_directory(char *data, char **save_ptr, size_t offset_lines)
 {
     char *clone = data;
-    // printf("%s", data);
-    // char *save_ptr;
-    // for (size_t i = 0; i < offset_lines; i++)
-    // {
-    //     char *line = strtok_r(NULL, "\n", save_ptr);
-    //     if (line == NULL)
-    //     {
-    //         return i;
-    //     }
-    // }
     size_t lines_read = offset_lines;
     char *t = strtok_r(offset_lines == 0 ? clone : NULL, " ", save_ptr);
     if (t == NULL)
@@ -38,10 +29,9 @@ size_t p2(char *data, char **save_ptr, size_t offset_lines)
         size_t num_children = strtol(num_children_str, NULL, 10);
         for (size_t i = 0; i < num_children; i++)
         {
-            size_t child_lines_read = p2(data, save_ptr, lines_read);
+            size_t child_lines_read = parse_directory(data, save_ptr, lines_read);
             lines_read += child_lines_read;
         }
-        p2(data, save_ptr, lines_read);
     }
     else if (strcmp(t, "FILE") == 0)
     {
@@ -60,6 +50,40 @@ size_t p2(char *data, char **save_ptr, size_t offset_lines)
         }
     }
     return lines_read;
+}
+size_t parse_file(char *data, char **save_ptr, size_t offset_lines)
+{
+    char *clone = data;
+    size_t lines_read = offset_lines;
+    char *t = strtok_r(offset_lines == 0 ? clone : NULL, " ", save_ptr);
+    if (t == NULL)
+    {
+        return lines_read;
+    }
+    if (strcmp(t, "FILE") == 0)
+    {
+        char *file_name = strtok_r(NULL, "\n", save_ptr);
+        if (file_name == NULL)
+        {
+            return lines_read;
+        }
+        printf("File: %s\n", file_name);
+        lines_read++;
+        char *content_size_str = strtok_r(NULL, "\n", save_ptr);
+        lines_read++;
+        if (content_size_str == NULL)
+        {
+            return lines_read;
+        }
+    }
+    return lines_read;
+}
+
+size_t parse_fs(char *data)
+{
+    char *save_ptr;
+
+    return parse_directory(data, &save_ptr, 0);
 }
 
 char *read_entire_file(const char *filename)
@@ -104,8 +128,7 @@ int main()
     {
         return 1; // Exit if file reading failed
     }
-    char *save_ptr;
-    size_t lines_read = p2(data, &save_ptr, 0);
+    size_t lines_read = parse_fs(data);
     printf("Total lines read: %zu\n", lines_read);
     free(data); // Free the allocated memory for file content
     return 0;
